@@ -5,7 +5,7 @@ public class HardwareProfile {
   private String id;
   private String name;
   private int ram;
-  private int vcpus;
+  private double vcpus;
 
   public HardwareProfile() {
   }
@@ -34,11 +34,11 @@ public class HardwareProfile {
     this.ram = ram;
   }
 
-  public int getVcpus() {
+  public double getVcpus() {
     return vcpus;
   }
 
-  public void setVcpus(int vcpus) {
-    this.vcpus = vcpus;
+  public void setVcpus(double d) {
+    this.vcpus = d;
   }
 }

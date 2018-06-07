@@ -1,5 +1,6 @@
 package org.benchsuite.qoehelper.model;
 
+
 public class SecurityGroup {
 
   private String id;
