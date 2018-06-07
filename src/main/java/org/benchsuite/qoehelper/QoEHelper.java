@@ -34,6 +34,8 @@ public class QoEHelper {
  * @throws IOException 
    */
   
+  
+  
   public CloudInfo getCloudInfo(
       String provider,
       String identity,
