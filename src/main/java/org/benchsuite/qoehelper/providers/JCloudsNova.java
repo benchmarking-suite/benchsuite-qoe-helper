@@ -69,14 +69,6 @@ public class JCloudsNova implements Closeable {
         final Properties overrides = new Properties();
         overrides.put(KeystoneProperties.KEYSTONE_VERSION, "2");
 
-        //Cosmote
-//        String identity = "demo:demo"; // tenantName:userName
-//        String credential = "cloudp_demo";
-        
-        //Fiware
-//        String identity = "cloudperfect testbed:cloudperfect@project.eu"; // tenantName:userName
-//        String credential = "cloud2017perfect";
-
         novaApi = ContextBuilder.newBuilder("openstack-nova")
 //                .endpoint("http://10.0.16.11:5000/v2.0/")    // Cosmote
         		.endpoint("https://"+host+":5000/v2.0")    // Fiware
