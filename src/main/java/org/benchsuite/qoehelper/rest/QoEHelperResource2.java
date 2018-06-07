@@ -2,23 +2,30 @@ package org.benchsuite.qoehelper.rest;
 
 import java.io.IOException;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import org.benchsuite.qoehelper.model.CloudInfo;
-import org.benchsuite.qoehelper.model.IncomingData;
+import org.benchsuite.qoehelper.model.GetInfoRequest;
 import org.benchsuite.qoehelper.QoEHelper;
 
+
+@Path("/")
 public class QoEHelperResource2 {
-	
+
+	public static final String REST_VERSION = "1.0.0";
+
+	@GET
+	@Path("/version")
+	public String getVersion(){
+		return REST_VERSION;
+	}
+
 	@POST
 	@Path("/CloudInfo")
     @Consumes({MediaType.APPLICATION_JSON})
-    @Produces({MediaType.TEXT_PLAIN})
-	public CloudInfo getData(IncomingData incomingData) throws IOException{
+    @Produces({MediaType.APPLICATION_JSON})
+	public CloudInfo getData(GetInfoRequest incomingData) throws IOException{
 		
 		System.out.println("Provider: "+incomingData.getProvider());
 		System.out.println("Identity: "+incomingData.getIdentity());
@@ -29,5 +36,4 @@ public class QoEHelperResource2 {
 		QoEHelper qoe =  new QoEHelper();
 		return qoe.getCloudInfo(incomingData.getProvider(), incomingData.getIdentity(), incomingData.getCredentials(), incomingData.getOptionalParameters());
 	}
-
 }
