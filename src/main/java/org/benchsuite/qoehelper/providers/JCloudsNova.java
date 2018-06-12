@@ -1,7 +1,5 @@
 package org.benchsuite.qoehelper.providers;
 
-import ch.qos.logback.core.Context;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -51,12 +49,9 @@ import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_SCRIPT
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.Authenticator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class JCloudsNova implements Closeable {
     private final NovaApi novaApi;
@@ -84,30 +79,18 @@ public class JCloudsNova implements Closeable {
               //.modules(modules)
               .overrides(overrides)
               .buildApi(NeutronApi.class);
-        
-//        context = ContextBuilder.newBuilder("openstack-nova")
-////              .endpoint("http://10.0.16.11:5000/v2.0/")    // Cosmote
-//      		.endpoint("https://"+host+":5000/v2.0")    // Fiware
-//              .credentials(identity, credential)
-//              //.modules(modules)
-//              .overrides(overrides)
-//              .buildApi(ComputeServiceContext.class);
-//        novaApi = context.unwrapApi(NovaApi.class);
-        
-//      regions = novaApi.getConfiguredRegions();
-//      System.out.println("Regions: " + regions.toString());  
     }
     
     public Collection<org.benchsuite.qoehelper.model.Network> listNetwork(String region) {	
     	
     	    Collection<org.benchsuite.qoehelper.model.Network> listNetworks = new ArrayList<org.benchsuite.qoehelper.model.Network>();
-    	    org.benchsuite.qoehelper.model.Network network = new org.benchsuite.qoehelper.model.Network();
     	
     		// Network with NeutronApi.class 
     	    NetworkApi networksNeutron = neutronApi.getNetworkApi(region);
     	    for (Network n: networksNeutron.list().concat()){
     	    	System.out.println(""+ n);
     	    	
+    	    	org.benchsuite.qoehelper.model.Network network = new org.benchsuite.qoehelper.model.Network();
     	    	network.setId(n.getId());
     	    	network.setName(n.getName());
     	    	listNetworks.add(network);
@@ -132,13 +115,13 @@ public class JCloudsNova implements Closeable {
 //	    }
     	
     	 Collection<org.benchsuite.qoehelper.model.SecurityGroup> listSecurityGroups = new ArrayList<>();
-    	 org.benchsuite.qoehelper.model.SecurityGroup securityGroup = new org.benchsuite.qoehelper.model.SecurityGroup();
-    	 
+ 
     	 SecurityGroupApi securityGroups = novaApi.getSecurityGroupApi(region).get();
     	    	
     	 for (SecurityGroup sGroup : securityGroups.list()) {
     		 System.out.println(""+sGroup);
     		 
+    		 org.benchsuite.qoehelper.model.SecurityGroup securityGroup = new org.benchsuite.qoehelper.model.SecurityGroup();
     		 securityGroup.setId(sGroup.getId());
     		 securityGroup.setName(sGroup.getName());
     		 listSecurityGroups.add(securityGroup);
@@ -150,17 +133,18 @@ public class JCloudsNova implements Closeable {
     public Collection<org.benchsuite.qoehelper.model.Image> listImageAPI(String region) {
       
     	Collection<org.benchsuite.qoehelper.model.Image> listImages = new ArrayList<org.benchsuite.qoehelper.model.Image>();
-    	org.benchsuite.qoehelper.model.Image image = new org.benchsuite.qoehelper.model.Image();
-    	
+
     	ImageApi imageApi = novaApi.getImageApi(region);
 
         for (org.jclouds.openstack.nova.v2_0.domain.Image i : imageApi.listInDetail().concat()) {
         	System.out.println("" + i);
         	
+        	org.benchsuite.qoehelper.model.Image image = new org.benchsuite.qoehelper.model.Image();
         	image.setId(i.getId());
         	image.setName(i.getName());
         	image.setDescription(i.getMetadata().get("description"));
         	listImages.add(image);
+        	
         }
         
         return listImages;
@@ -169,12 +153,12 @@ public class JCloudsNova implements Closeable {
     public Collection<HardwareProfile> listFlavorAPI(String region) {
     	
     	Collection<HardwareProfile> listHardwareProfiles = new ArrayList<HardwareProfile>();
-    	HardwareProfile hardwareProfile = new HardwareProfile();
-    	
+
     	FlavorApi flavorApi = novaApi.getFlavorApi(region);
 		for (Flavor flavor : flavorApi.listInDetail().concat()) {
 			System.out.println("  " + flavor);
 			
+			HardwareProfile hardwareProfile = new HardwareProfile();
 			hardwareProfile.setId(flavor.getId());
 			hardwareProfile.setName(flavor.getName());
 			hardwareProfile.setRam(flavor.getRam());

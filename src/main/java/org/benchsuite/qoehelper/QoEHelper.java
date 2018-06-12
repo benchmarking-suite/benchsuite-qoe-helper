@@ -55,7 +55,7 @@ public class QoEHelper {
 		 	try {
 		 			if(region==null) 
 		 				region ="us-east-1";
-		 			
+
 		 			Collection<Image> listImages = jcloudsAmazon.listImages(region);
 		 			Collection<HardwareProfile> listHardwareProfiles = jcloudsAmazon.listHardwareProfiles(region);
 		 			Collection<SecurityGroup> listSecurityGroups = jcloudsAmazon.listSecurityGroup(region);
@@ -75,12 +75,12 @@ public class QoEHelper {
 		 	break;
 	 	
 	  case "openstack-nova":  
-	 			    
+		  
 		 	JCloudsNova jcloudsNova = new JCloudsNova(identity,credentials,host);
 		 	try {
 		 			if(region==null)
 		 				region="Vicenza";
-		
+
 		 		    Collection<Image> listImages = jcloudsNova.listImageAPI(region);
 		 		    Collection<HardwareProfile> listHardwareProfiles = jcloudsNova.listFlavorAPI(region);
 		 		    Collection<SecurityGroup> listSecurityGroups = jcloudsNova.listSecurityGroup(region);

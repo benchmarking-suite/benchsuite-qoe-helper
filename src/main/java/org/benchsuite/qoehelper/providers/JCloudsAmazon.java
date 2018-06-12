@@ -36,7 +36,6 @@ import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_SCRIPT
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.Authenticator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
@@ -77,17 +76,17 @@ public class JCloudsAmazon implements Closeable {
     public Collection<org.benchsuite.qoehelper.model.SecurityGroup> listSecurityGroup(String region){
     	
     	Collection<org.benchsuite.qoehelper.model.SecurityGroup> listSecurityGroups = new ArrayList<org.benchsuite.qoehelper.model.SecurityGroup>();
-    	org.benchsuite.qoehelper.model.SecurityGroup securityGroup = new org.benchsuite.qoehelper.model.SecurityGroup();
-    	
+
     	// Security Groups for Regions
     	AWSSecurityGroupApi secGroups = awsec2Context.getSecurityGroupApi().get();
     	for(org.jclouds.ec2.domain.SecurityGroup sGroups: secGroups.describeSecurityGroupsInRegion(region)){
     		
+    		System.out.println("SecurityGroup for region:"+sGroups);
+    		
+    		org.benchsuite.qoehelper.model.SecurityGroup securityGroup = new org.benchsuite.qoehelper.model.SecurityGroup();
     		securityGroup.setId(sGroups.getId());
     		securityGroup.setName(sGroups.getName());
     		listSecurityGroups.add(securityGroup);
-    		
-    		System.out.println("SecurityGroup for region:"+sGroups);
     	}
     	
     	// Security Groups All
@@ -102,8 +101,7 @@ public class JCloudsAmazon implements Closeable {
     public Collection<Network> listNetwork(String region){
     	
     	Collection<Network> listNetworks = new ArrayList<Network>();
-    	Network network = new Network();
-    	   	
+ 	
     	//Subnet all with AWSEC2Api.class
 //    	SubnetApi subnetsAWSEC2Context = ec2Context.getSubnetApi().get();  
 //    	for(Subnet subnet: subnetsAWSEC2Context.list()){
@@ -115,6 +113,7 @@ public class JCloudsAmazon implements Closeable {
 		for(Subnet subnetRegion: subnetsRegion.list()){
 			System.out.println(""+subnetRegion);
 			
+			Network network = new Network();
 	    	network.setId(subnetRegion.getSubnetId());
 	    	network.setName(null);
     		listNetworks.add(network);
@@ -126,14 +125,12 @@ public class JCloudsAmazon implements Closeable {
     public Collection<org.benchsuite.qoehelper.model.Image> listImages(String region){
     	
     	Collection<org.benchsuite.qoehelper.model.Image> listImages = new ArrayList<org.benchsuite.qoehelper.model.Image>();
-    	org.benchsuite.qoehelper.model.Image image = new org.benchsuite.qoehelper.model.Image();
-    	
-    	//System.out.println("test: "+awsec2Context.getAMIApi().get().describeImagesInRegion("ap-southeast-2"));
-    	
-    	Set<? extends Image> images = context.getComputeService().listImages(); 	
-    	for (Image i : images) {
+
+    	AWSAMIApi images = awsec2Context.getAMIApi().get();
+    	for (org.jclouds.ec2.domain.Image i : images.describeImagesInRegion(region, AWSDescribeImagesOptions.Builder.ownedBy("137112412989"))){
     		System.out.println("Images:  " + i);
     		
+    		org.benchsuite.qoehelper.model.Image image = new org.benchsuite.qoehelper.model.Image();
         	image.setId(i.getId());
         	image.setName(i.getName());
         	image.setDescription(i.getDescription());
@@ -146,12 +143,12 @@ public class JCloudsAmazon implements Closeable {
     public Collection<HardwareProfile> listHardwareProfiles(String region){
     	
     	Collection<HardwareProfile> listHardwareProfiles = new ArrayList<HardwareProfile>();
-    	HardwareProfile hardwareProfile = new HardwareProfile();
     	    	
     	Set<? extends Hardware> hardwareProfiles = context.getComputeService().listHardwareProfiles();
     	for(Hardware h : hardwareProfiles){
     		System.out.println("hardwareProfiles: "+ h.toString());
     		
+    		HardwareProfile hardwareProfile = new HardwareProfile();
     		hardwareProfile.setId(h.getId());
     		hardwareProfile.setName(h.getName());
     		hardwareProfile.setRam(h.getRam());
