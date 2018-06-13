@@ -1,25 +1,40 @@
 package org.benchsuite.qoehelper.rest;
 
-import org.benchsuite.qoehelper.QoEHelper;
-import org.benchsuite.qoehelper.model.CloudInfo;
-
 import java.io.IOException;
-import java.util.Map;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+
+import org.benchsuite.qoehelper.model.CloudInfo;
+import org.benchsuite.qoehelper.model.GetInfoRequest;
+import org.benchsuite.qoehelper.QoEHelper;
+import org.benchsuite.qoehelper.providers.ProviderConfigurationException;
+
+
+@Path("/")
 public class QoEHelperResource {
 
-  private QoEHelper service;
+	public static final String REST_VERSION = "1.0.0";
 
-  public QoEHelperResource(){
-    this.service = new QoEHelper();
-  }
+	@GET
+	@Path("/version")
+	public String getVersion(){
+		return REST_VERSION;
+	}
 
-  public CloudInfo getCloudInfo(
-		   String provider,
-		   String identity,
-		   String credentials,
-           Map<String, String> optionalParameters) throws IOException{
-
-    return this.service.getCloudInfo(provider, identity, credentials, optionalParameters);
-  }
+	@POST
+	@Path("/CloudInfo")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+	public CloudInfo getData(GetInfoRequest incomingData) throws IOException, ProviderConfigurationException {
+		
+		System.out.println("Provider: "+incomingData.getProvider());
+		System.out.println("Identity: "+incomingData.getIdentity());
+		System.out.println("Credentials: "+incomingData.getCredentials());
+		System.out.println("OptionalParameters host: "+incomingData.getOptionalParameters().get("host"));
+		System.out.println("OptionalParameters region: "+incomingData.getOptionalParameters().get("region"));
+		
+		QoEHelper qoe =  new QoEHelper();
+		return qoe.getCloudInfo(incomingData.getProvider(), incomingData.getIdentity(), incomingData.getCredentials(), incomingData.getOptionalParameters());
+	}
 }

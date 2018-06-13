@@ -43,4 +43,15 @@ public class CloudInfo {
   public void setSecurityGroups(Collection<SecurityGroup> securityGroups) {
     this.securityGroups = securityGroups;
   }
+
+
+  @Override
+  public String toString() {
+    return "CloudInfo{" +
+        "images=" + images +
+        ", hardwareProfiles=" + hardwareProfiles +
+        ", networks=" + networks +
+        ", securityGroups=" + securityGroups +
+        '}';
+  }
 }
