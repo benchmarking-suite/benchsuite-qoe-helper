@@ -12,6 +12,10 @@ import org.jclouds.openstack.keystone.config.KeystoneProperties;
 import org.jclouds.openstack.neutron.v2.NeutronApi;
 import org.jclouds.openstack.neutron.v2.features.NetworkApi;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
+import org.jclouds.openstack.nova.v2_0.domain.Flavor;
+import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi;
+import org.jclouds.openstack.nova.v2_0.features.FlavorApi;
+import org.jclouds.openstack.nova.v2_0.features.ImageApi;
 
 public class OpenstackConnector extends ProviderConnector {
 
@@ -65,13 +69,12 @@ public class OpenstackConnector extends ProviderConnector {
       this.project = this.username;
     }
 
-
     this.connect();
   }
 
   private void connect(){
 
-     Properties overrides = new Properties();
+    Properties overrides = new Properties();
 
     // TODO: authVersion could also be "3". If "2" fails, we should try "3"
     overrides.put(KeystoneProperties.KEYSTONE_VERSION, "2");
@@ -89,12 +92,23 @@ public class OpenstackConnector extends ProviderConnector {
             .credentials(id, this.password)
             .overrides(overrides)
             .buildApi(NeutronApi.class);
-
   }
 
   @Override
   public Collection<SecurityGroup> listSecurityGroups() {
-    return null;
+	Collection<SecurityGroup> listSecurityGroups = new HashSet<>();
+	  
+ 	SecurityGroupApi securityGroups = novaApi.getSecurityGroupApi(this.region).get();
+
+	for (org.jclouds.openstack.nova.v2_0.domain.SecurityGroup sGroup : securityGroups.list()) {
+		 
+ 		SecurityGroup securityGroup = new SecurityGroup();
+ 		securityGroup.setId(sGroup.getId());
+ 		securityGroup.setName(sGroup.getName());
+ 		listSecurityGroups.add(securityGroup);
+ 	}
+ 	 
+ 	return listSecurityGroups;
   }
 
   @Override
@@ -115,11 +129,37 @@ public class OpenstackConnector extends ProviderConnector {
 
   @Override
   public Collection<Image> listImages() {
-    return null;
+	Collection<Image> listImages = new HashSet<>();
+
+  	ImageApi imageApi = novaApi.getImageApi(this.region);
+
+    for (org.jclouds.openstack.nova.v2_0.domain.Image i : imageApi.listInDetail().concat()) {
+            	
+      Image image = new Image();
+      image.setId(i.getId());
+      image.setName(i.getName());
+      image.setDescription(i.getMetadata().get("description"));
+      listImages.add(image);
+    }
+      
+    return listImages;
   }
 
   @Override
   public Collection<HardwareProfile> listHardwareProfiles() {
-    return null;
+	Collection<HardwareProfile> listHardwareProfiles = new HashSet<>();
+
+  	FlavorApi flavorApi = novaApi.getFlavorApi(this.region);
+    for (Flavor flavor : flavorApi.listInDetail().concat()) {
+				
+	  HardwareProfile hardwareProfile = new HardwareProfile();
+	  hardwareProfile.setId(flavor.getId());
+	  hardwareProfile.setName(flavor.getName());
+	  hardwareProfile.setRam(flavor.getRam());
+	  hardwareProfile.setVcpus(flavor.getVcpus());
+	  listHardwareProfiles.add(hardwareProfile);
+    }
+		
+	return listHardwareProfiles;
   }
 }

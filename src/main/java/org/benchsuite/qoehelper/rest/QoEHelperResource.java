@@ -27,13 +27,7 @@ public class QoEHelperResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
 	public CloudInfo getData(GetInfoRequest incomingData) throws IOException, ProviderConfigurationException {
-		
-		System.out.println("Provider: "+incomingData.getProvider());
-		System.out.println("Identity: "+incomingData.getIdentity());
-		System.out.println("Credentials: "+incomingData.getCredentials());
-		System.out.println("OptionalParameters host: "+incomingData.getOptionalParameters().get("host"));
-		System.out.println("OptionalParameters region: "+incomingData.getOptionalParameters().get("region"));
-		
+			
 		QoEHelper qoe =  new QoEHelper();
 		return qoe.getCloudInfo(incomingData.getProvider(), incomingData.getIdentity(), incomingData.getCredentials(), incomingData.getOptionalParameters());
 	}
