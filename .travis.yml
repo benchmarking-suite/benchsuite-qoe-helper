@@ -1,6 +1,2 @@
 language: java
-
-deploy:
-  provider: script
-  script: "mvn -s .travis.settings.xml deploy"
-  skip_cleanup: true
+script: "mvn -s .travis.settings.xml deploy"
