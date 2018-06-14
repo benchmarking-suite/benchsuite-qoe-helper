@@ -84,6 +84,9 @@
             </configuration>
         </plugin>
 
+
+
+        <!-- create a skinny war without dependencies -->
         <plugin>
             <artifactId>maven-war-plugin</artifactId>
             <version>3.2.2</version>
@@ -91,7 +94,12 @@
                 <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
             </configuration>
         </plugin>
+
+
     </plugins>
+
+
+
 
       <extensions>
           <extension>
@@ -100,5 +108,7 @@
               <version>0.0.4</version>
           </extension>
       </extensions>
+
+
   </build>
 </project>
