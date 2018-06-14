@@ -105,7 +105,7 @@ public class EC2Connector extends ProviderConnector {
 		
 		Network network = new Network();
     	network.setId(subnetRegion.getSubnetId());
-    	network.setName(null);
+    	network.setName(subnetRegion.getTags().get("Name"));
 		listNetworks.add(network);
     }
     
