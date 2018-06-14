@@ -1,2 +1,10 @@
 language: java
 script: "mvn -s .travis.settings.xml deploy"
+
+
+
+after_success:
+
+  # trigger the build of the QoE Helper docker image
+  - "curl --data '{\"docker_tag\": \"dev\"}' -X POST https://cloud.docker.com/api/build/v1/source/5bedb30c-01e9-4894-a7a1-1690b269dc4e/trigger/688d257a-44f9-4708-8a52-52e8d8a86da1/call/"
+
