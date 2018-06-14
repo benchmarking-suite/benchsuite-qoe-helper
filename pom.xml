@@ -7,9 +7,26 @@
   </properties>
   <groupId>org.benchsuite-qoe_helper</groupId>
   <artifactId>benchsuite-qoe_helper</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>benchsuite-qoe_helper</name>
+
+
+    <distributionManagement>
+        <repository>
+            <id>packagecloud-travis</id>
+            <url>
+                packagecloud+https://packagecloud.io/ggiammat/benchsuite
+            </url>
+        </repository>
+        <snapshotRepository>
+            <id>packagecloud-travis</id>
+            <url>
+                packagecloud+https://packagecloud.io/ggiammat/benchsuite
+            </url>
+        </snapshotRepository>
+    </distributionManagement>
+
   <dependencies>
     <dependency>
         <groupId>org.apache.jclouds</groupId>
@@ -66,6 +83,22 @@
                 <target>1.8</target>
             </configuration>
         </plugin>
+
+        <plugin>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>3.2.2</version>
+            <configuration>
+                <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+            </configuration>
+        </plugin>
     </plugins>
+
+      <extensions>
+          <extension>
+              <groupId>io.packagecloud.maven.wagon</groupId>
+              <artifactId>maven-packagecloud-wagon</artifactId>
+              <version>0.0.4</version>
+          </extension>
+      </extensions>
   </build>
 </project>
