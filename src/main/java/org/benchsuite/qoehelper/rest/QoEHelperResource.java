@@ -19,6 +19,7 @@
 package org.benchsuite.qoehelper.rest;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -47,6 +48,9 @@ public class QoEHelperResource {
 	public CloudInfo getData(GetInfoRequest incomingData) throws IOException, ProviderConfigurationException {
 			
 		QoEHelper qoe =  new QoEHelper();
+		if(incomingData.getOptionalParameters()==null)
+			incomingData.setOptionalParameters(new HashMap<>());
+			
 		return qoe.getCloudInfo(incomingData.getProvider(), incomingData.getIdentity(), incomingData.getCredentials(), incomingData.getOptionalParameters());
 	}
 }
