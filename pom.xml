@@ -83,20 +83,7 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
-
-            <!-- create a skinny war without dependencies -->
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.2.2</version>
-                <configuration>
-                    <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-                </configuration>
-            </plugin>
-
-
         </plugins>
-
 
         <!-- necessary extension to deploy on packagecloud -->
         <extensions>
@@ -107,8 +94,27 @@
             </extension>
         </extensions>
 
-
     </build>
+
+    <profiles>
+        <profile>
+            <id>no-deps-war</id>
+            <build>
+                <plugins>
+                    <!-- create a skinny war without dependencies -->
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>3.2.2</version>
+                        <configuration>
+                            <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
 
 
