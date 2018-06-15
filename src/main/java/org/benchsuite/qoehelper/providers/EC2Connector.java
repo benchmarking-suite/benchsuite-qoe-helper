@@ -99,11 +99,11 @@ public class EC2Connector extends ProviderConnector {
   
   @Override
   public Collection<SecurityGroup> listSecurityGroups() {
-	Collection<SecurityGroup> listSecurityGroups = new HashSet<>();
+  	Collection<SecurityGroup> listSecurityGroups = new HashSet<>();
 
   	AWSSecurityGroupApi secGroups = awsec2Context.getSecurityGroupApi().get();
-  	for(org.jclouds.ec2.domain.SecurityGroup sGroups: secGroups.describeSecurityGroupsInRegion(this.region)){
 
+  	for(org.jclouds.ec2.domain.SecurityGroup sGroups: secGroups.describeSecurityGroupsInRegion(this.region)){
   		SecurityGroup securityGroup = new SecurityGroup();
   		securityGroup.setId(sGroups.getId());
   		securityGroup.setName(sGroups.getName());
@@ -115,19 +115,17 @@ public class EC2Connector extends ProviderConnector {
 
   @Override
   public Collection<Network> listNetworks() {
-	Collection<Network> listNetworks = new HashSet<>();
+	  Collection<Network> listNetworks = new HashSet<>();
 	
-	SubnetApi subnetsRegion = awsec2Context.getSubnetApiForRegion(this.region).get();
-	for(Subnet subnetRegion: subnetsRegion.list()){
-		System.out.println(""+subnetRegion);
-		
-		Network network = new Network();
-    	network.setId(subnetRegion.getSubnetId());
-    	network.setName(subnetRegion.getTags().get("Name"));
-		listNetworks.add(network);
-    }
+	  SubnetApi subnetsRegion = awsec2Context.getSubnetApiForRegion(this.region).get();
+	  for(Subnet subnetRegion: subnetsRegion.list()){
+		  Network network = new Network();
+      network.setId(subnetRegion.getSubnetId());
+      network.setName(subnetRegion.getTags().get("Name"));
+		  listNetworks.add(network);
+	  }
     
-	return listNetworks;
+	  return listNetworks;
   }
 
   @Override
@@ -136,7 +134,6 @@ public class EC2Connector extends ProviderConnector {
 
   	AWSAMIApi images = awsec2Context.getAMIApi().get();
   	for (org.jclouds.ec2.domain.Image i : images.describeImagesInRegion(this.region, AWSDescribeImagesOptions.Builder.ownedBy("137112412989"))){
-
   	  Image image = new Image();
       image.setId(i.getId());
       image.setName(i.getName());
@@ -153,7 +150,6 @@ public class EC2Connector extends ProviderConnector {
   	
   	Set<? extends Hardware> hardwareProfiles = context.getComputeService().listHardwareProfiles();
   	for(Hardware h : hardwareProfiles){
-
   	  HardwareProfile hardwareProfile = new HardwareProfile();
   	  hardwareProfile.setId(h.getId());
   	  hardwareProfile.setName(h.getName());

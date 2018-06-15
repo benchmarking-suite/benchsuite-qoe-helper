@@ -119,7 +119,6 @@ public class OpenstackConnector extends ProviderConnector {
  	SecurityGroupApi securityGroups = novaApi.getSecurityGroupApi(this.region).get();
 
 	for (org.jclouds.openstack.nova.v2_0.domain.SecurityGroup sGroup : securityGroups.list()) {
-		 
  		SecurityGroup securityGroup = new SecurityGroup();
  		securityGroup.setId(sGroup.getId());
  		securityGroup.setName(sGroup.getName());
@@ -152,7 +151,6 @@ public class OpenstackConnector extends ProviderConnector {
   	ImageApi imageApi = novaApi.getImageApi(this.region);
 
     for (org.jclouds.openstack.nova.v2_0.domain.Image i : imageApi.listInDetail().concat()) {
-            	
       Image image = new Image();
       image.setId(i.getId());
       image.setName(i.getName());
@@ -169,13 +167,12 @@ public class OpenstackConnector extends ProviderConnector {
 
   	FlavorApi flavorApi = novaApi.getFlavorApi(this.region);
     for (Flavor flavor : flavorApi.listInDetail().concat()) {
-				
-	  HardwareProfile hardwareProfile = new HardwareProfile();
-	  hardwareProfile.setId(flavor.getId());
-	  hardwareProfile.setName(flavor.getName());
-	  hardwareProfile.setRam(flavor.getRam());
-	  hardwareProfile.setVcpus(flavor.getVcpus());
-	  listHardwareProfiles.add(hardwareProfile);
+  	  HardwareProfile hardwareProfile = new HardwareProfile();
+	    hardwareProfile.setId(flavor.getId());
+	    hardwareProfile.setName(flavor.getName());
+	    hardwareProfile.setRam(flavor.getRam());
+	    hardwareProfile.setVcpus(flavor.getVcpus());
+	    listHardwareProfiles.add(hardwareProfile);
     }
 		
 	return listHardwareProfiles;
