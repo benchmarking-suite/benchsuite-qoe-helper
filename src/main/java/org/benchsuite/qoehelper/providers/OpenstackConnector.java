@@ -34,18 +34,31 @@ import org.jclouds.openstack.nova.v2_0.domain.Flavor;
 import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi;
 import org.jclouds.openstack.nova.v2_0.features.FlavorApi;
 import org.jclouds.openstack.nova.v2_0.features.ImageApi;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 public class OpenstackConnector extends ProviderConnector {
+
+  private static final Logger logger = LoggerFactory.getLogger(OpenstackConnector.class);
 
   public static final String AUTH_URL_PARAM = "authUrl";
   public static final String REGION_PARAM   = "region";
   public static final String PROJECT_PARAM = "project";
+
+  // v3 authentication only parameters
+  public static final String USER_DOMAIN_PARAM = "userDomain";
+  public static final String PROJECT_DOMAIN_PARAM = "projectDomain";
+
 
   private String username;
   private String password;
   private String authUrl;
   private String region;
   private String project;
+  private String userDomain;
+  // FIXME: never used?
+  private String projectDomain;
+
 
   private NovaApi novaApi;
   private NeutronApi neutronApi;
@@ -80,6 +93,20 @@ public class OpenstackConnector extends ProviderConnector {
       this.region = "RegionOne";
     }
 
+    if(optionalParams.containsKey(USER_DOMAIN_PARAM)){
+      this.userDomain = optionalParams.get(USER_DOMAIN_PARAM);
+    }
+    else {
+      this.userDomain = "Default";
+    }
+
+    if(optionalParams.containsKey(PROJECT_DOMAIN_PARAM)){
+      this.projectDomain = optionalParams.get(PROJECT_DOMAIN_PARAM);
+    }
+    else {
+      this.projectDomain = "default";
+    }
+
     if(optionalParams.containsKey(PROJECT_PARAM)){
       this.project = optionalParams.get(PROJECT_PARAM);
     }
@@ -92,24 +119,51 @@ public class OpenstackConnector extends ProviderConnector {
 
   private void connect(){
 
-    Properties overrides = new Properties();
+    try {
+      logger.debug("Trying v3 authentication");
 
-    // TODO: authVersion could also be "3". If "2" fails, we should try "3"
-    overrides.put(KeystoneProperties.KEYSTONE_VERSION, "2");
-    String v2AuthUrl = this.authUrl + "/v2.0/";
-    String id = this.project + ":" + this.username;
+      // first try with v3 authentication. If it fails, fallback to v2
+      Properties overrides = new Properties();
+      overrides.put(KeystoneProperties.KEYSTONE_VERSION, "3");
+      overrides.put(KeystoneProperties.SCOPE, "project:" + this.project);
+      String url = this.authUrl + "/v3";
+      String id = this.userDomain + ":" + this.username;
+      tryLogin(url, id, this.password, overrides);
 
+    }
+    catch (Exception ex){
+
+      logger.warn("v3 authentication failed with \"" + ex.getMessage() + "\"");
+      logger.debug("Trying v2 authentication");
+
+      // perform v2 authentication
+      Properties overrides = new Properties();
+      overrides.put(KeystoneProperties.KEYSTONE_VERSION, "2");
+      String url = this.authUrl + "/v2.0/";
+      String id = this.project + ":" + this.username;
+
+      tryLogin(url, id, this.password, overrides);
+
+    }
+
+  }
+
+
+  private void tryLogin(String url, String id, String password, Properties overrides){
     novaApi = ContextBuilder.newBuilder("openstack-nova")
-        		.endpoint(v2AuthUrl)
-            .credentials(id, this.password)
+        		.endpoint(url)
+            .credentials(id, password)
             .overrides(overrides)
             .buildApi(NovaApi.class);
 
     neutronApi = ContextBuilder.newBuilder("openstack-neutron")
-            .endpoint(v2AuthUrl)
-            .credentials(id, this.password)
+            .endpoint(url)
+            .credentials(id, password)
             .overrides(overrides)
             .buildApi(NeutronApi.class);
+
+    // try an API call to test if the authentication is fine
+    novaApi.getConfiguredRegions();
   }
 
   @Override
