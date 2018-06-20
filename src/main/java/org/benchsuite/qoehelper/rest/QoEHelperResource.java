@@ -19,11 +19,14 @@
 package org.benchsuite.qoehelper.rest;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import org.benchsuite.qoehelper.BenchmarkConfigurationRepository;
+import org.benchsuite.qoehelper.model.BenchmarkConfiguration;
 import org.benchsuite.qoehelper.model.CloudInfo;
 import org.benchsuite.qoehelper.model.GetInfoRequest;
 import org.benchsuite.qoehelper.QoEHelper;
@@ -43,8 +46,8 @@ public class QoEHelperResource {
 
 	@POST
 	@Path("/CloudInfo")
-    @Consumes({MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+  @Produces({MediaType.APPLICATION_JSON})
 	public CloudInfo getData(GetInfoRequest incomingData) throws IOException, ProviderConfigurationException {
 			
 		QoEHelper qoe =  new QoEHelper();
@@ -53,4 +56,15 @@ public class QoEHelperResource {
 			
 		return qoe.getCloudInfo(incomingData.getProvider(), incomingData.getIdentity(), incomingData.getCredentials(), incomingData.getOptionalParameters());
 	}
+
+	@GET
+	@Path("/benchmarks/{version}")
+	@Consumes({MediaType.APPLICATION_JSON})
+  @Produces({MediaType.APPLICATION_JSON})
+	public Collection<BenchmarkConfiguration> getBenchmarkConfiguration(
+			@PathParam("version") String benchsuiteVersion) throws IOException {
+
+		return BenchmarkConfigurationRepository.getInstance(benchsuiteVersion).getAllBenchmarkConfigurations();
+	}
+
 }
