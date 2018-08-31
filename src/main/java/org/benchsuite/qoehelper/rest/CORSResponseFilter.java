@@ -10,6 +10,8 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -21,6 +23,8 @@ import java.io.IOException;
 @Provider
 public class CORSResponseFilter implements ContainerResponseFilter {
 
+  private static final Logger logger = LoggerFactory.getLogger(CORSResponseFilter.class);
+
   @Override
   public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 
@@ -30,5 +34,6 @@ public class CORSResponseFilter implements ContainerResponseFilter {
     headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
     headers.add("Access-Control-Allow-Headers", "Origin, Accept, Authorization, X-Requested-With, Content-Type");
 
+    logger.debug("Added CORS headers in the response");
   }
 }
