@@ -121,7 +121,7 @@ public class EC2Connector extends ProviderConnector {
 	  for(Subnet subnetRegion: subnetsRegion.list()){
 		  Network network = new Network();
       network.setId(subnetRegion.getSubnetId());
-      network.setName(subnetRegion.getTags().get("Name"));
+      network.setName(subnetRegion.getTags().get("Name")!= null ? subnetRegion.getTags().get("Name") : subnetRegion.getSubnetId() );
 		  listNetworks.add(network);
 	  }
     
@@ -152,7 +152,7 @@ public class EC2Connector extends ProviderConnector {
   	for(Hardware h : hardwareProfiles){
   	  HardwareProfile hardwareProfile = new HardwareProfile();
   	  hardwareProfile.setId(h.getId());
-  	  hardwareProfile.setName(h.getName());
+  	  hardwareProfile.setName(h.getName()!=null ? h.getName() : h.getId());
   	  hardwareProfile.setRam(h.getRam());
   	  hardwareProfile.setVcpus(h.getProcessors().get(0).getCores());
   	  listHardwareProfiles.add(hardwareProfile);
