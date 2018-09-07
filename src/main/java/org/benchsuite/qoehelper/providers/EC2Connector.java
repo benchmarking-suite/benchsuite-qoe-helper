@@ -36,11 +36,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.ec2.domain.Subnet;
 import org.jclouds.ec2.features.SubnetApi;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class EC2Connector extends ProviderConnector {
@@ -84,8 +80,6 @@ public class EC2Connector extends ProviderConnector {
   private void connect(){
 	  
       Properties properties = new Properties();
-      properties.setProperty(PROPERTY_EC2_AMI_QUERY, "owner-id=137112412989;state=available;image-type=machine");
-      properties.setProperty(PROPERTY_EC2_CC_AMI_QUERY, "");
       long scriptTimeout = TimeUnit.MILLISECONDS.convert(20, TimeUnit.MINUTES);
       properties.setProperty(TIMEOUT_SCRIPT_COMPLETE, scriptTimeout + "");
       
@@ -132,8 +126,17 @@ public class EC2Connector extends ProviderConnector {
   public Collection<Image> listImages() {
 	Collection<Image> listImages = new HashSet<>();
 
-  	AWSAMIApi images = awsec2Context.getAMIApi().get();
-  	for (org.jclouds.ec2.domain.Image i : images.describeImagesInRegion(this.region, AWSDescribeImagesOptions.Builder.ownedBy("137112412989"))){
+  	AWSAMIApi imagesApi = awsec2Context.getAMIApi().get();
+
+
+  	Map<String, String> amiFilters = new HashMap<>();
+
+  	Set<? extends org.jclouds.ec2.domain.Image> images = imagesApi.describeImagesInRegion(
+  	    this.region,
+        AWSDescribeImagesOptions.Builder.filters(amiFilters)
+    );
+
+  	for (org.jclouds.ec2.domain.Image i : images){
   	  Image image = new Image();
       image.setId(i.getId());
       image.setName(i.getName());
