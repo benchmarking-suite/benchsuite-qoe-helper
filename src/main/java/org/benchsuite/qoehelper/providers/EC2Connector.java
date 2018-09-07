@@ -130,6 +130,10 @@ public class EC2Connector extends ProviderConnector {
 
 
   	Map<String, String> amiFilters = new HashMap<>();
+  	amiFilters.put("owner-id", "137112412989");
+  	amiFilters.put("state", "available");
+  	amiFilters.put("image-type", "machine");
+  	amiFilters.put("root-device-type", "ebs");
 
   	Set<? extends org.jclouds.ec2.domain.Image> images = imagesApi.describeImagesInRegion(
   	    this.region,
