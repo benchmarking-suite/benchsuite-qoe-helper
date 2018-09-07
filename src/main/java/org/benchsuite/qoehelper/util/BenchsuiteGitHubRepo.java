@@ -2,6 +2,7 @@ package org.benchsuite.qoehelper.util;
 
 import ca.szc.configparser.Ini;
 import org.benchsuite.qoehelper.model.BenchmarkConfiguration;
+import org.benchsuite.qoehelper.model.BenchmarkConfigurationParsingException;
 import org.kohsuke.github.GHContent;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHTag;
@@ -72,25 +73,32 @@ public class BenchsuiteGitHubRepo {
 
 
 
-  public static Collection<BenchmarkConfiguration> getRawBenchmarkConfigurations(String tag) throws IOException {
+  public static Collection<BenchmarkConfiguration> getRawBenchmarkConfigurations(String tag) throws BenchmarkConfigurationParsingException {
 
     logger.info("Fetching benchmark configurations from GitHub for version " + tag);
 
     Set<BenchmarkConfiguration> res = new HashSet<>();
 
-    for(GHContent c: repository.getDirectoryContent(BENCHMARKING_FOLDER, tag)){
-      if(c.isFile()) {
-        logger.debug("Parsing file " + c.getPath());
-        String content = repository. getFileContent(c.getPath(), tag).getContent();
-        content = sanitizeContent(content);
+    try {
 
-        StringReader stringReader = new StringReader(content);
-        BufferedReader inFromUser = new BufferedReader(stringReader);
-        Ini ini = new Ini().read(inFromUser);
-        Map<String, Map<String, String>> sections = ini.getSections();
-        String benchmarkName = c.getName().substring(0, c.getName().length() - 5);
-        res.add(new BenchmarkConfiguration(benchmarkName, sections));
+      for (GHContent c : repository.getDirectoryContent(BENCHMARKING_FOLDER, tag)) {
+        if (c.isFile()) {
+          logger.debug("Parsing file " + c.getPath());
+          String content = repository.getFileContent(c.getPath(), tag).getContent();
+          content = sanitizeContent(content);
+
+          StringReader stringReader = new StringReader(content);
+          BufferedReader inFromUser = new BufferedReader(stringReader);
+          Ini ini = new Ini().read(inFromUser);
+          Map<String, Map<String, String>> sections = ini.getSections();
+          String benchmarkName = c.getName().substring(0, c.getName().length() - 5);
+          res.add(new BenchmarkConfiguration(benchmarkName, sections));
+        }
       }
+
+    }
+    catch (IOException ex){
+      throw new BenchmarkConfigurationParsingException(ex);
     }
 
     return res;
