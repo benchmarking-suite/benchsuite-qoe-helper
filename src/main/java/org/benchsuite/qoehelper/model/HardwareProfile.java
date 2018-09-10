@@ -73,6 +73,6 @@ public class HardwareProfile {
   }
 
   private void refreshDisplayName(){
-    this.displayName = this.name + " - " + this.vcpus + "CPUs, " + this.ram + " GBs RAM";
+    this.displayName = this.name + " - " + (int)Math.round(vcpus) + " CPUs, " + this.ram + " MBs RAM";
   }
 }

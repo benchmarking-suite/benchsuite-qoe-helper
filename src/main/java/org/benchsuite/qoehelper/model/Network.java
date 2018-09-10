@@ -22,6 +22,7 @@ public class Network {
 
   private String id;
   private String name;
+  private String displayName;
 
   public Network() {
   }
@@ -40,6 +41,7 @@ public class Network {
 
   public void setName(String name) {
     this.name = name;
+    this.refreshDisplayName();
   }
 
   @Override
@@ -48,5 +50,20 @@ public class Network {
         "id='" + id + '\'' +
         ", name='" + name + '\'' +
         '}';
+  }
+  
+  public String getDisplayName() {
+        return displayName;
+  }
+
+  private void setDisplayName(String displayName) {
+        this.displayName = displayName;
+  }
+
+  private void refreshDisplayName(){
+	    if (this.name != null && !this.name.equals(this.id))
+	    	this.displayName = this.id + " - " + this.name;
+	    else
+	    	this.displayName = this.id;
   }
 }

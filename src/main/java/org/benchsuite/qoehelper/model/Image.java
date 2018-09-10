@@ -23,6 +23,7 @@ public class Image {
   private String id;
   private String name;
   private String description;
+  private String displayName;
 
   public Image() {
   }
@@ -41,6 +42,7 @@ public class Image {
 
   public void setName(String name) {
     this.name = name;
+    this.refreshDisplayName();
   }
 
   public String getDescription() {
@@ -49,5 +51,21 @@ public class Image {
 
   public void setDescription(String description) {
     this.description = description;
+    this.refreshDisplayName();
+  }
+  
+  public String getDisplayName() {
+	return displayName;
+  }
+
+  private void setDisplayName(String displayName) {
+	this.displayName = displayName;
+  }
+
+  private void refreshDisplayName(){
+	if(this.description != null)
+       this.displayName = this.id + " - " + this.description;
+	else
+		this.displayName = this.id + " - " + this.name;
   }
 }

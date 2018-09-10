@@ -23,6 +23,7 @@ public class SecurityGroup {
 
   private String id;
   private String name;
+  private String displayName;
 
   public SecurityGroup() {
   }
@@ -41,5 +42,18 @@ public class SecurityGroup {
 
   public void setName(String name) {
     this.name = name;
+    this.refreshDisplayName();
+  }
+  
+  public String getDisplayName() {
+	    return displayName;
+  }
+
+  private void setDisplayName(String displayName) {
+	    this.displayName = displayName;
+  }
+
+  private void refreshDisplayName(){
+        this.displayName = this.id + " - " + this.name;
   }
 }
