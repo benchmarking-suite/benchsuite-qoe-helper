@@ -24,6 +24,7 @@ public class HardwareProfile {
   private String name;
   private int ram;
   private double vcpus;
+  private String displayName;
 
   public HardwareProfile() {
   }
@@ -42,6 +43,7 @@ public class HardwareProfile {
 
   public void setName(String name) {
     this.name = name;
+    this.refreshDisplayName();
   }
 
   public int getRam() {
@@ -50,6 +52,7 @@ public class HardwareProfile {
 
   public void setRam(int ram) {
     this.ram = ram;
+    this.refreshDisplayName();
   }
 
   public double getVcpus() {
@@ -58,5 +61,18 @@ public class HardwareProfile {
 
   public void setVcpus(double d) {
     this.vcpus = d;
+    this.refreshDisplayName();
+  }
+
+  public String getDisplayName() {
+    return displayName;
+  }
+
+  private void setDisplayName(String displayName) {
+    this.displayName = displayName;
+  }
+
+  private void refreshDisplayName(){
+    this.displayName = this.name + " - " + this.vcpus + "CPUs, " + this.ram + " GBs RAM";
   }
 }
