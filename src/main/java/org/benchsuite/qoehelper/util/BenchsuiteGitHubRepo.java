@@ -1,6 +1,7 @@
 package org.benchsuite.qoehelper.util;
 
 import ca.szc.configparser.Ini;
+import ca.szc.configparser.exceptions.IniParserException;
 import org.benchsuite.qoehelper.model.BenchmarkConfiguration;
 import org.benchsuite.qoehelper.model.BenchmarkConfigurationParsingException;
 import org.kohsuke.github.GHContent;
@@ -89,10 +90,16 @@ public class BenchsuiteGitHubRepo {
 
           StringReader stringReader = new StringReader(content);
           BufferedReader inFromUser = new BufferedReader(stringReader);
-          Ini ini = new Ini().read(inFromUser);
-          Map<String, Map<String, String>> sections = ini.getSections();
-          String benchmarkName = c.getName().substring(0, c.getName().length() - 5);
-          res.add(new BenchmarkConfiguration(benchmarkName, sections));
+          try {
+            Ini ini = new Ini().read(inFromUser);
+            Map<String, Map<String, String>> sections = ini.getSections();
+            String benchmarkName = c.getName().substring(0, c.getName().length() - 5);
+            res.add(new BenchmarkConfiguration(benchmarkName, sections));
+          }
+          catch (IniParserException ex){
+            logger.error("Error parsing ini configuration file " + c.getPath() + ": " + ex.getMessage());
+            ex.printStackTrace();
+          }
         }
       }
 
