@@ -28,6 +28,7 @@ public class BenchsuiteGitHubRepo {
 
   static {
     try {
+      logger.debug("\"user.home\" is " + System.getProperty("user.home"));
       repository = GitHub.connect().getRepository(BENCHSUITE_REPO);
 
     } catch (IOException e) {
